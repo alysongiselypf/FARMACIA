@@ -19,7 +19,8 @@ pipeline {
                             -Dsonar.projectKey=FARMACIA ^
                             -Dsonar.projectName=FARMACIA ^
                             -Dsonar.sources=. ^
-                            -Dsonar.host.url=http://localhost:9000
+                            -Dsonar.host.url=%SONAR_HOST_URL% ^
+                            -Dsonar.token=%SONAR_AUTH_TOKEN%
                         """
                     }
                 }
