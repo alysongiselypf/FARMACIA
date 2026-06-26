@@ -11,7 +11,15 @@ pipeline {
 
         stage('Análisis Estático (SonarQube)') {
             steps {
-                echo 'Análisis estático de código completado.'
+                withSonarQubeEnv('SonarQube') {
+                    bat '''
+                        sonar-scanner ^
+                        -Dsonar.projectKey=FARMACIA ^
+                        -Dsonar.projectName=FARMACIA ^
+                        -Dsonar.sources=. ^
+                        -Dsonar.host.url=http://localhost:9000
+                    '''
+                }
             }
         }
 
