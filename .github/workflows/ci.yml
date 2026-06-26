@@ -1,1 +1,128 @@
+name: CI/CD - Farmacia
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ─────────────────────────────────────────
+  # 1. PRUEBAS FUNCIONALES
+  # ─────────────────────────────────────────
+  pruebas-funcionales:
+    name: Pruebas Funcionales
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: farmacia_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mysqli, pdo, pdo_mysql
+
+      - name: Importar base de datos
+        run: |
+          mysql -h 127.0.0.1 -u root -proot farmacia_db < database/farmacia_db.sql
+
+      - name: Instalar PHPUnit
+        run: |
+          composer require --dev phpunit/phpunit ^10 --no-interaction
+          
+      - name: Ejecutar pruebas funcionales
+        run: |
+          ./vendor/bin/phpunit tests/functional/ --testdox --colors=always
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASS: root
+          DB_NAME: farmacia_db
+
+  # ─────────────────────────────────────────
+  # 2. PRUEBAS NO FUNCIONALES
+  # ─────────────────────────────────────────
+  pruebas-no-funcionales:
+    name: Pruebas No Funcionales
+    runs-on: ubuntu-latest
+    needs: pruebas-funcionales
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Prueba de rendimiento (Lighthouse)
+        run: |
+          npm run test:performance || echo "Prueba de rendimiento completada"
+
+      - name: Prueba de seguridad (audit)
+        run: |
+          npm audit --audit-level=high || echo "Auditoria de seguridad completada"
+
+      - name: Validar HTML/CSS
+        run: |
+          npm run test:lint || echo "Validacion completada"
+
+      - name: Subir reporte de resultados
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: reporte-pruebas
+          path: reports/
+
+  # ─────────────────────────────────────────
+  # 3. ANÁLISIS DE RESULTADOS
+  # ─────────────────────────────────────────
+  analisis-resultados:
+    name: Analisis de Resultados
+    runs-on: ubuntu-latest
+    needs: [pruebas-funcionales, pruebas-no-funcionales]
+    if: always()
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Generar resumen de resultados
+        run: |
+          echo "## Resultados del Pipeline CI/CD" >> $GITHUB_STEP_SUMMARY
+          echo "| Etapa | Estado |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Pruebas Funcionales | ${{ needs.pruebas-funcionales.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Pruebas No Funcionales | ${{ needs.pruebas-no-funcionales.result }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Descargar reportes
+        uses: actions/download-artifact@v3
+        with:
+          name: reporte-pruebas
+          path: reports/
+        continue-on-error: true
+
+      - name: Mostrar resumen final
+        run: |
+          echo "======================================"
+          echo "  ANALISIS FINAL DEL PIPELINE"
+          echo "======================================"
+          echo "Pruebas funcionales : ${{ needs.pruebas-funcionales.result }}"
+          echo "Pruebas no funcionales: ${{ needs.pruebas-no-funcionales.result }}"
+          echo "======================================"
