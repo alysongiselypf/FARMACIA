@@ -68,13 +68,39 @@ test('Los archivos PHP tienen extension correcta', () => {
 
 test('Los archivos CSS tienen extension correcta', () => {
     const disenioDir = path.join(__dirname, '../../diseno');
-    const archivos = obtenerArchivos(disenioDir, '.css');
+    function buscarArchivos(dir, ext) {
+        let encontrados = [];
+        if (!fs.existsSync(dir)) return encontrados;
+        fs.readdirSync(dir).forEach(f => {
+            const ruta = path.join(dir, f);
+            if (fs.statSync(ruta).isDirectory()) {
+                encontrados = encontrados.concat(buscarArchivos(ruta, ext));
+            } else if (f.endsWith(ext)) {
+                encontrados.push(ruta);
+            }
+        });
+        return encontrados;
+    }
+    const archivos = buscarArchivos(disenioDir, '.css');
     assert(archivos.length > 0, 'Debe haber archivos .css en la carpeta diseno/');
 });
 
 test('Existe al menos un archivo HTML', () => {
     const disenioDir = path.join(__dirname, '../../diseno');
-    const archivos = obtenerArchivos(disenioDir, '.html');
+    function buscarArchivos(dir, ext) {
+        let encontrados = [];
+        if (!fs.existsSync(dir)) return encontrados;
+        fs.readdirSync(dir).forEach(f => {
+            const ruta = path.join(dir, f);
+            if (fs.statSync(ruta).isDirectory()) {
+                encontrados = encontrados.concat(buscarArchivos(ruta, ext));
+            } else if (f.endsWith(ext)) {
+                encontrados.push(ruta);
+            }
+        });
+        return encontrados;
+    }
+    const archivos = buscarArchivos(disenioDir, '.html');
     assert(archivos.length > 0, 'Debe haber archivos .html en la carpeta diseno/');
 });
 
