@@ -138,10 +138,21 @@ console.log('\n═════════════════════�
 console.log(`  RESULTADO: ${passed} pasadas / ${failed} fallidas`);
 console.log('══════════════════════════════════════\n');
 
-// En lugar de forzar exit code 1, solo avisamos
-if (failed > 0) {
-    console.warn(`⚠️ Se detectaron ${failed} fallos de compatibilidad, revisar el reporte en reports/compatibilidad-report.json`);
-    // process.exit(1);  // ← comentado para no detener la ejecución
+// Clasificación de pruebas críticas vs no críticas
+const pruebasCriticas = results.filter(r =>
+    r.nombre.includes('PHP') ||
+    r.nombre.includes('Seguridad') ||
+    r.nombre.includes('Rendimiento')
+);
+
+const fallosCriticos = pruebasCriticas.filter(r => r.estado === 'FAIL').length;
+
+if (fallosCriticos > 0) {
+    console.error(`❌ Se detectaron ${fallosCriticos} fallos CRÍTICOS. El proceso se detiene.`);
+    process.exit(1);
+} else if (failed > 0) {
+    console.warn(`⚠️ Se detectaron ${failed} fallos NO críticos (ej. accesibilidad/estilo). Revisar el reporte en reports/compatibilidad-report.json`);
+    // No detenemos el proceso
 } else {
     console.log('✅ Todas las pruebas de compatibilidad pasaron correctamente');
 }
