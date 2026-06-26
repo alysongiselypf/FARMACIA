@@ -12,13 +12,16 @@ pipeline {
         stage('Análisis Estático (SonarQube)') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat '''
-                        sonar-scanner ^
-                        -Dsonar.projectKey=FARMACIA ^
-                        -Dsonar.projectName=FARMACIA ^
-                        -Dsonar.sources=. ^
-                        -Dsonar.host.url=http://localhost:9000
-                    '''
+                    script {
+                        def scannerHome = tool 'sonar-scanner'
+                        bat """
+                            "${scannerHome}\\bin\\sonar-scanner.bat" ^
+                            -Dsonar.projectKey=FARMACIA ^
+                            -Dsonar.projectName=FARMACIA ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.host.url=http://localhost:9000
+                        """
+                    }
                 }
             }
         }
