@@ -67,6 +67,7 @@ jobs:
         run: |
           node tests/non-functional/performance.test.js
           node tests/non-functional/calidad.test.js
+          node tests/non-functional/seguridad.test.js
 
       - name: Subir reporte
         uses: actions/upload-artifact@v4
