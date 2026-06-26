@@ -32,15 +32,14 @@ jobs:
           find diseno/pages/ -type f -name "*.php" -exec php -l {} \;
 
       - name: Instalar dependencias de Node.js
-        run: npm ci
+        run: npm install
 
       # ------------------------------------------
       # ETAPA 2: Análisis Estático (Linting)
       # ------------------------------------------
-      # Verifica que el código JS no tenga errores de sintaxis básicos
       - name: Validar estilo de JavaScript (Linter)
         run: |
-          npx eslint-config-prettier || true # Evita romper si no está ESLint configurado aún
+          npx eslint-config-prettier || true
 
       # ------------------------------------------
       # ETAPA 5: Pruebas de Seguridad (Vulnerabilidades en dependencias)
@@ -54,7 +53,7 @@ jobs:
   pruebas-funcionales:
     name: Pruebas Funcionales e Integración
     runs-on: ubuntu-latest
-    needs: build-and-lint # Solo corre si la construcción básica y análisis pasaron
+    needs: build-and-lint
 
     services:
       mysql:
@@ -103,7 +102,7 @@ jobs:
   pruebas-performance:
     name: Pruebas de Rendimiento y No Funcionales
     runs-on: ubuntu-latest
-    needs: pruebas-funcionales # Solo corre si las pruebas funcionales fueron exitosas
+    needs: pruebas-funcionales
 
     steps:
       - name: Clonar repositorio
@@ -115,7 +114,7 @@ jobs:
           node-version: '20'
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm install
 
       # Ejecuta tu script actual que mide el tamaño de imágenes y CSS
       - name: Validar tamaño de archivos y performance en disco
