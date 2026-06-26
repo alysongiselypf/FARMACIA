@@ -7,9 +7,6 @@ on:
     branches: [ main ]
 
 jobs:
-  # ─────────────────────────────────────────
-  # 1. PRUEBAS FUNCIONALES
-  # ─────────────────────────────────────────
   pruebas-funcionales:
     name: Pruebas Funcionales
     runs-on: ubuntu-latest
@@ -26,7 +23,7 @@ jobs:
 
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar PHP
         uses: shivammathur/setup-php@v2
@@ -40,20 +37,18 @@ jobs:
 
       - name: Instalar PHPUnit
         run: |
-          composer require --dev phpunit/phpunit ^10 --no-interaction
-          
+          wget https://phar.phpunit.de/phpunit-10.phar
+          chmod +x phpunit-10.phar
+
       - name: Ejecutar pruebas funcionales
         run: |
-          ./vendor/bin/phpunit tests/functional/ --testdox --colors=always
+          php phpunit-10.phar tests/functional/ --testdox --colors=always
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASS: root
           DB_NAME: farmacia_db
 
-  # ─────────────────────────────────────────
-  # 2. PRUEBAS NO FUNCIONALES
-  # ─────────────────────────────────────────
   pruebas-no-funcionales:
     name: Pruebas No Funcionales
     runs-on: ubuntu-latest
@@ -61,38 +56,24 @@ jobs:
 
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Prueba de rendimiento (Lighthouse)
+      - name: Ejecutar pruebas no funcionales
         run: |
-          npm run test:performance || echo "Prueba de rendimiento completada"
+          node tests/non-functional/performance.test.js
 
-      - name: Prueba de seguridad (audit)
-        run: |
-          npm audit --audit-level=high || echo "Auditoria de seguridad completada"
-
-      - name: Validar HTML/CSS
-        run: |
-          npm run test:lint || echo "Validacion completada"
-
-      - name: Subir reporte de resultados
-        uses: actions/upload-artifact@v3
+      - name: Subir reporte
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: reporte-pruebas
           path: reports/
 
-  # ─────────────────────────────────────────
-  # 3. ANÁLISIS DE RESULTADOS
-  # ─────────────────────────────────────────
   analisis-resultados:
     name: Analisis de Resultados
     runs-on: ubuntu-latest
@@ -101,7 +82,7 @@ jobs:
 
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generar resumen de resultados
         run: |
@@ -112,7 +93,7 @@ jobs:
           echo "| Pruebas No Funcionales | ${{ needs.pruebas-no-funcionales.result }} |" >> $GITHUB_STEP_SUMMARY
 
       - name: Descargar reportes
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: reporte-pruebas
           path: reports/
@@ -123,6 +104,7 @@ jobs:
           echo "======================================"
           echo "  ANALISIS FINAL DEL PIPELINE"
           echo "======================================"
-          echo "Pruebas funcionales : ${{ needs.pruebas-funcionales.result }}"
-          echo "Pruebas no funcionales: ${{ needs.pruebas-no-funcionales.result }}"
+          echo "Pruebas funcionales    : ${{ needs.pruebas-funcionales.result }}"
+          echo "Pruebas no funcionales : ${{ needs.pruebas-no-funcionales.result }}"
           echo "======================================"
+          
