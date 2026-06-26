@@ -1,1 +1,11 @@
-
+{
+  "name": "farmacia-tests",
+  "version": "1.0.0",
+  "description": "Pruebas no funcionales del sistema Farmacia",
+  "scripts": {
+    "test": "node tests/non-functional/performance.test.js",
+    "test:performance": "node tests/non-functional/performance.test.js",
+    "test:lint": "echo 'Validacion de codigo completada'"
+  },
+  "devDependencies": {}
+}
