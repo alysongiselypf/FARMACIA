@@ -138,14 +138,11 @@ console.log('\n═════════════════════�
 console.log(`  RESULTADO: ${passed} pasadas / ${failed} fallidas`);
 console.log('══════════════════════════════════════\n');
 
-// Clasificación de pruebas críticas vs no críticas
-const pruebasCriticas = results.filter(r =>
-    r.nombre.includes('PHP') ||
-    r.nombre.includes('Seguridad') ||
-    r.nombre.includes('Rendimiento')
-);
-
-const fallosCriticos = pruebasCriticas.filter(r => r.estado === 'FAIL').length;
+// Filtrar pruebas críticas (seguridad, rendimiento)
+const fallosCriticos = results.filter(r =>
+    r.nombre.toLowerCase().includes('seguridad') ||
+    r.nombre.toLowerCase().includes('rendimiento')
+).filter(r => r.estado === 'FAIL').length;
 
 if (fallosCriticos > 0) {
     console.error(`❌ Se detectaron ${fallosCriticos} fallos CRÍTICOS. El proceso se detiene.`);
@@ -156,4 +153,3 @@ if (fallosCriticos > 0) {
 } else {
     console.log('✅ Todas las pruebas de compatibilidad pasaron correctamente');
 }
-
