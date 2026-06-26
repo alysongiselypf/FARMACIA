@@ -2,7 +2,7 @@
 // Credenciales de la base de datos (ajusta según tu configuración de XAMPP)
 $servername = "localhost";
 $username = "root";
-$password = ""; // Por defecto, XAMPP no tiene contraseña para el usuario 'root'
+$password   = getenv('DB_PASSWORD') ?: "";
 $dbname = "farmacia_db"; // Asegúrate de que esta base de datos exista en phpMyAdmin
 
 // Crear la conexión a la base de datos
