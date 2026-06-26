@@ -83,10 +83,10 @@ class FarmaciaFunctionalTest extends TestCase
     public function test_insertar_medicamento()
     {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO medicamento (nombre, descripcion, precio, stock) 
-             VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE nombre=nombre"
+            "INSERT INTO medicamento (nombre, clase, precio, stock, imagen, tipo) 
+             VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE nombre=nombre"
         );
-        $result = $stmt->execute(['Paracetamol Test', 'Analgesico de prueba', 5.50, 100]);
+        $result = $stmt->execute(['Medicamento Test', 'Analgesico', 5.50, 100, 'test.png', 'medicamento']);
         $this->assertTrue($result, 'Debe poder insertar un medicamento');
     }
 
