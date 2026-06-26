@@ -1,44 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gestión de recetas de la farmacia">
+    <title>Gestión de Recetas</title>
+</head>
+<body>
+
 <h2>Gestión de Recetas</h2>
+
 <form id="prescriptionForm">
     <label for="patientName">Nombre del Paciente:</label>
     <input type="text" id="patientName" name="patientName">
+
     <label for="medication">Medicación:</label>
     <input type="text" id="medication" name="medication">
+
     <button type="submit">Guardar</button>
 </form>
-<div id="prescriptionsList">
-    <!-- Lista de recetas -->
-</div>
+
+<div id="prescriptionsList"></div>
 
 <script>
-    document.getElementById('prescriptionForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const patientName = document.getElementById('patientName').value;
-        const medication = document.getElementById('medication').value;
-        addPrescription({ patientName, medication }).then(() => {
-            alert('Receta agregada exitosamente');
-            loadPrescriptions();  // Actualizar la lista después de agregar
-        });
-    });
+document.getElementById('prescriptionForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    async function addPrescription(prescription) {
-        const response = await fetch('http://your-api-url-here/prescriptions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(prescription)
-        });
-        return await response.json();
-    }
+    const patientName = document.getElementById('patientName').value;
+    const medication = document.getElementById('medication').value;
 
-    // Función para cargar y mostrar la lista de recetas
-    async function loadPrescriptions() {
-        const response = await fetch('http://your-api-url-here/prescriptions');
-        const prescriptions = await response.json();
-        const prescriptionsList = document.getElementById('prescriptionsList');
-        prescriptionsList.innerHTML = prescriptions.map(pres => `<p>${pres.patientName} - ${pres.medication}</p>`).join('');
-    }
+    await addPrescription({ patientName, medication });
+
+    alert('Receta agregada exitosamente');
 
     loadPrescriptions();
+});
+
+async function addPrescription(prescription) {
+    const response = await fetch('http://your-api-url-here/prescriptions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(prescription)
+    });
+
+    return await response.json();
+}
+
+async function loadPrescriptions() {
+    const response = await fetch('http://your-api-url-here/prescriptions');
+
+    const prescriptions = await response.json();
+
+    const prescriptionsList = document.getElementById('prescriptionsList');
+
+    prescriptionsList.innerHTML = prescriptions
+        .map(pres => `<p>${pres.patientName} - ${pres.medication}</p>`)
+        .join('');
+}
+
+loadPrescriptions();
 </script>
+
+</body>
+</html>
+
