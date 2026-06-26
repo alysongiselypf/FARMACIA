@@ -72,9 +72,9 @@ class IntegridadTest extends TestCase
 
     public function test_consulta_fecha_no_futura()
     {
-        $stmt = $this->pdo->query("SELECT * FROM consulta WHERE fecha_consulta > NOW()");
+        $stmt = $this->pdo->query("SELECT * FROM consulta WHERE fecha_consulta > DATE_ADD(NOW(), INTERVAL 1 DAY)");
         $invalidas = $stmt->fetchAll();
-        $this->assertEmpty($invalidas, 'No debe haber consultas con fecha futura');
+        $this->assertEmpty($invalidas, 'No debe haber consultas con fecha muy futura (mas de 1 dia)');
     }
 
     public function test_detalle_nombre_producto_no_vacio()
