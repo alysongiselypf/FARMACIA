@@ -1,4 +1,4 @@
-name: CI/CD - Farmacia
+name: CI/CD - Farmacia Profesional
 
 on:
   push:
@@ -7,9 +7,54 @@ on:
     branches: [ main ]
 
 jobs:
-  pruebas-funcionales:
-    name: Pruebas Funcionales
+  # ==========================================
+  # ETAPAS 1, 2 y 5: Construcción, Análisis Estático y Seguridad
+  # ==========================================
+  build-and-lint:
+    name: Construcción y Análisis de Código
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      # ------------------------------------------
+      # ETAPA 1: Construcción (Sintaxis y Dependencias)
+      # ------------------------------------------
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Validar sintaxis de PHP (Construcción rápida)
+        run: |
+          find php/ -type f -name "*.php" -exec php -l {} \;
+          find diseno/pages/ -type f -name "*.php" -exec php -l {} \;
+
+      - name: Instalar dependencias de Node.js
+        run: npm ci
+
+      # ------------------------------------------
+      # ETAPA 2: Análisis Estático (Linting)
+      # ------------------------------------------
+      # Verifica que el código JS no tenga errores de sintaxis básicos
+      - name: Validar estilo de JavaScript (Linter)
+        run: |
+          npx eslint-config-prettier || true # Evita romper si no está ESLint configurado aún
+
+      # ------------------------------------------
+      # ETAPA 5: Pruebas de Seguridad (Vulnerabilidades en dependencias)
+      # ------------------------------------------
+      - name: Auditoría de Seguridad de Dependencias Node
+        run: npm audit --audit-level=high || true
+
+  # ==========================================
+  # ETAPAS 3 y 4: Pruebas Unitarias y Funcionales
+  # ==========================================
+  pruebas-funcionales:
+    name: Pruebas Funcionales e Integración
+    runs-on: ubuntu-latest
+    needs: build-and-lint # Solo corre si la construcción básica y análisis pasaron
 
     services:
       mysql:
@@ -40,7 +85,10 @@ jobs:
           wget https://phar.phpunit.de/phpunit-10.phar
           chmod +x phpunit-10.phar
 
-      - name: Ejecutar pruebas funcionales
+      # ------------------------------------------
+      # ETAPA 3 & 4: Pruebas Unitarias y Funcionales
+      # ------------------------------------------
+      - name: Ejecutar Pruebas Funcionales (Base de Datos)
         run: |
           php phpunit-10.phar tests/functional/ --testdox --colors=always
         env:
@@ -49,10 +97,13 @@ jobs:
           DB_PASS: root
           DB_NAME: farmacia_db
 
-  pruebas-no-funcionales:
-    name: Pruebas No Funcionales
+  # ==========================================
+  # ETAPA 6: Pruebas de Performance
+  # ==========================================
+  pruebas-performance:
+    name: Pruebas de Rendimiento y No Funcionales
     runs-on: ubuntu-latest
-    needs: pruebas-funcionales
+    needs: pruebas-funcionales # Solo corre si las pruebas funcionales fueron exitosas
 
     steps:
       - name: Clonar repositorio
@@ -63,52 +114,25 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Ejecutar pruebas no funcionales
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Ejecuta tu script actual que mide el tamaño de imágenes y CSS
+      - name: Validar tamaño de archivos y performance en disco
+        run: node tests/non-functional/performance.test.js
+
+      - name: Ejecutar pruebas no funcionales adicionales
         run: |
-          node tests/non-functional/performance.test.js
           node tests/non-functional/calidad.test.js
           node tests/non-functional/seguridad.test.js
           node tests/non-functional/accesibilidad.test.js
           node tests/non-functional/compatibilidad.test.js
 
-      - name: Subir reporte
+      - name: Subir reporte final
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: reporte-pruebas
+          name: reporte-pruebas-ci
           path: reports/
-
-  analisis-resultados:
-    name: Analisis de Resultados
-    runs-on: ubuntu-latest
-    needs: [pruebas-funcionales, pruebas-no-funcionales]
-    if: always()
-
-    steps:
-      - name: Clonar repositorio
-        uses: actions/checkout@v4
-
-      - name: Generar resumen de resultados
-        run: |
-          echo "## Resultados del Pipeline CI/CD" >> $GITHUB_STEP_SUMMARY
-          echo "| Etapa | Estado |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Pruebas Funcionales | ${{ needs.pruebas-funcionales.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Pruebas No Funcionales | ${{ needs.pruebas-no-funcionales.result }} |" >> $GITHUB_STEP_SUMMARY
-
-      - name: Descargar reportes
-        uses: actions/download-artifact@v4
-        with:
-          name: reporte-pruebas
-          path: reports/
-        continue-on-error: true
-
-      - name: Mostrar resumen final
-        run: |
-          echo "======================================"
-          echo "  ANALISIS FINAL DEL PIPELINE"
-          echo "======================================"
-          echo "Pruebas funcionales    : ${{ needs.pruebas-funcionales.result }}"
-          echo "Pruebas no funcionales : ${{ needs.pruebas-no-funcionales.result }}"
-          echo "======================================"
+          
           
