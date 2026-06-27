@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo '══ ETAPA 1: Construcción Automática ══'
                 echo 'Validando sintaxis PHP...'
-                bat 'powershell -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
+                bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
                 echo 'Instalando dependencias de Node.js...'
                 bat 'npm install'
                 echo 'Instalando dependencias de Composer...'
@@ -25,7 +25,6 @@ pipeline {
                 echo '✅ Construcción completada.'
             }
         }
-
         // ══════════════════════════════════════════════════
         // ETAPA 2: Análisis Estático con SonarQube
         // ══════════════════════════════════════════════════
