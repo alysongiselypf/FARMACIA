@@ -89,22 +89,24 @@ pipeline {
         }
 
         // ══════════════════════════════════════════════════
-        // ETAPA 6: Pruebas de Performance
+        // ETAPA 6: Pruebas de Performance con JMeter
         // ══════════════════════════════════════════════════
         stage('Pruebas de Performance (JMeter)') {
             steps {
                 echo '══ ETAPA 6: Pruebas de Rendimiento con JMeter ══'
-                // Limpiar reportes anteriores si existen
                 bat 'if exist reports\\jmeter-html rmdir /s /q reports\\jmeter-html'
                 bat 'if exist reports\\jmeter-results.jtl del reports\\jmeter-results.jtl'
-                // Ejecutar JMeter
-                bat '"C:\\apache-jmeter-5.6.3\\bin\\jmeter.bat" -n -t tests\\performance\\farmacia_jmeter.jmx -l reports\\jmeter-results.jtl -e -o reports\\jmeter-html'
+                bat '''
+                    set JAVA_HOME=C:\\Program Files\\Java\\jdk-21.0.10
+                    set PATH=%JAVA_HOME%\\bin;C:\\Windows\\System32;%PATH%
+                    "C:\\apache-jmeter-5.6.3\\bin\\jmeter.bat" -n -t tests\\performance\\farmacia_jmeter.jmx -l reports\\jmeter-results.jtl -e -o reports\\jmeter-html
+                '''
                 echo '✅ Pruebas de rendimiento con JMeter completadas.'
             }
             post {
                 always {
                     publishHTML(target: [
-                        allowMissing: false,
+                        allowMissing: true,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: 'reports/jmeter-html',
@@ -113,7 +115,7 @@ pipeline {
                     ])
                 }
             }
-        } 
+        }
 
         // ══════════════════════════════════════════════════
         // ETAPA 7: Gestión de Issues
