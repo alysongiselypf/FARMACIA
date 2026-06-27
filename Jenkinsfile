@@ -21,7 +21,7 @@ pipeline {
                 echo 'Instalando dependencias de Node.js...'
                 bat 'npm install'
                 echo 'Instalando dependencias de Composer...'
-                bat 'composer install --no-interaction --prefer-dist'
+                bat 'powershell -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
                 echo '✅ Construcción completada.'
             }
         }
