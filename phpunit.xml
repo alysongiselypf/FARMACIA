@@ -10,10 +10,10 @@
         </testsuite>
     </testsuites>
 
-    <php>
-        <env name="DB_HOST" value="127.0.0.1"/>
-        <env name="DB_USER" value="root"/>
-        <env name="DB_PASS" value="root"/>
-        <env name="DB_NAME" value="farmacia_db"/>
-    </php>
+   <php>
+    <env name="DB_HOST" value="127.0.0.1"/>
+    <env name="DB_USER" value="root"/>
+    <env name="DB_PASS" value=""/>
+    <env name="DB_NAME" value="farmacia_db"/>
+</php>
 </phpunit>
