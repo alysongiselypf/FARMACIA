@@ -116,13 +116,13 @@ pipeline {
         // ══════════════════════════════════════════════════
         // ETAPA 8: Despliegue Continuo
         // ══════════════════════════════════════════════════
-        stage('Despliegue') {
+       stage('Despliegue') {
             steps {
                 echo '══ ETAPA 8: Despliegue Continuo ══'
                 echo '1. Estableciendo conexión con servidor...'
                 bat 'echo Conexion exitosa.'
                 echo '2. Generando paquete de distribución...'
-                bat 'powershell Compress-Archive -Path php,diseno,database,package.json,composer.json -DestinationPath farmacia-sistema-prod.zip -Force'
+                bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Compress-Archive -Path php,diseno,database,package.json,composer.json -DestinationPath farmacia-sistema-prod.zip -Force'
                 echo '3. Desplegando en producción...'
                 bat 'echo Despliegue completado exitosamente.'
                 echo '✅ Sistema en producción activo.'
