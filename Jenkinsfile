@@ -68,14 +68,11 @@ pipeline {
         // ══════════════════════════════════════════════════
         // ETAPA 4: Pruebas Funcionales
         // ══════════════════════════════════════════════════
-        stage('Pruebas Funcionales') {
+        stage('Pruebas Funcionales (Postman/Newman)') {
             steps {
-                echo '══ ETAPA 4: Pruebas Funcionales ══'
-                bat 'node tests/non-functional/performance.test.js || echo Pruebas finalizadas'
-                bat 'node tests/non-functional/calidad.test.js || echo Calidad OK'
-                bat 'node tests/non-functional/accesibilidad.test.js || echo Accesibilidad OK'
-                bat 'node tests/non-functional/compatibilidad.test.js || echo Compatibilidad OK'
-                echo '✅ Pruebas funcionales completadas.'
+                echo '══ ETAPA 4: Pruebas Funcionales con Newman/Postman ══'
+                bat 'newman run tests\\functional\\farmacia_postman_collection.json --reporters cli'
+                echo '✅ Pruebas funcionales con Postman/Newman completadas.'
             }
         }
 
