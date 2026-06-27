@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html {
+	font-size: 62.5%;
+	font-family: 'Poppins', sans-serif;
+}
+main{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 70vh;
+	background: white;
+}
+
+/*LOGIN*/
+main .login-form {
+	display: flex;
+    flex-direction: column;
+    background: #fff;
+    text-align: center;
+    padding: 20px 25px;
+    box-shadow: 0 5px 10px black;
+    margin-top: 20px;
+}
+
+main .login-form h1.title {
+	color: black;
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+main .login-form label {
+    margin-bottom: 35px;
+}
+
+main .login-form .fa-solid{
+	font-size: 20px;
+    color: black;
+    margin-right: 10px;
+
+}
+
+main .login-form input {
+	outline: none;
+    border: none;
+    color: black;
+    border-bottom: solid 1px black;
+    padding: 0 5px;
+    font-size: 18px;
+}
+
+main .login-form label input::placeholder {
+	color: black;
+}
+
+main .login-form .link {
+	color: black;
+    margin-bottom: 15px;
+}
+
+main .login-form button {
+	color: white;
+    border: none;
+    background: black;
+    padding:  10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+/*SIGN UP*/
+main .signup-form {
+	display: flex;
+    flex-direction: column;
+    background: #fff;
+    text-align: center;
+    padding: 20px 25px;
+    box-shadow: 0 5px 10px black;
+    margin-top: 20px;
+}
+
+main .signup-form h1.title {
+	color: black;
+    font-size: 25px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+main .signup-form label {
+    margin-bottom: 35px;
+}
+
+main .signup-form .fa-solid{
+	font-size: 20px;
+    color: black;
+    margin-right: 10px;
+
+}
+
+main .signup-form input {
+	outline: none;
+    border: none;
+    color: black;
+    border-bottom: solid 1px black;
+    padding: 0 5px;
+    font-size: 18px;
+}
+
+main .signup-form label input::placeholder {
+	color: black;
+}
+
+main .signup-form .link {
+	color: black;
+    margin-bottom: 15px;
+}
+
+main .signup-form button {
+	color: white;
+    border: none;
+    background: black;
+    padding:  10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+}

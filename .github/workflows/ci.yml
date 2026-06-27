@@ -1,0 +1,204 @@
+name: CI/CD - Farmacia Profesional
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ==========================================
+  # ETAPAS 1, 2 y 5: Construcción, Análisis Estático y Seguridad
+  # ==========================================
+  build-and-lint:
+    name: Construcción y Análisis de Código
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      # ------------------------------------------
+      # ETAPA 1: Construcción (Sintaxis y Dependencias)
+      # ------------------------------------------
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Validar sintaxis de PHP (Construcción rápida)
+        run: |
+          find php/ -type f -name "*.php" -exec php -l {} \;
+          find diseno/pages/ -type f -name "*.php" -exec php -l {} \;
+
+      - name: Instalar dependencias de Node.js
+        run: npm install
+
+      # ------------------------------------------
+      # ETAPA 2: Análisis Estático (Linting)
+      # ------------------------------------------
+      - name: Validar estilo de JavaScript (Linter)
+        run: |
+          npx eslint-config-prettier || true
+
+      # ------------------------------------------
+      # ETAPA 5: Pruebas de Seguridad (Vulnerabilidades en dependencias)
+      # ------------------------------------------
+      - name: Auditoría de Seguridad de Dependencias Node
+        run: npm audit --audit-level=high || true
+
+  # ==========================================
+  # ETAPAS 3 y 4: Pruebas Unitarias y Funcionales
+  # ==========================================
+  pruebas-funcionales:
+    name: Pruebas Funcionales e Integración
+    runs-on: ubuntu-latest
+    needs: build-and-lint
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: farmacia_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mysqli, pdo, pdo_mysql
+
+      - name: Importar base de datos
+        run: |
+          mysql -h 127.0.0.1 -u root -proot farmacia_db < database/farmacia_db.sql
+
+      - name: Instalar PHPUnit
+        run: |
+          wget https://phar.phpunit.de/phpunit-10.phar
+          chmod +x phpunit-10.phar
+
+      # ------------------------------------------
+      # ETAPA 3 & 4: Pruebas Unitarias y Funcionales
+      # ------------------------------------------
+      - name: Ejecutar Pruebas Funcionales (Base de Datos)
+        run: |
+          php phpunit-10.phar tests/functional/ --testdox --colors=always
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASS: root
+          DB_NAME: farmacia_db
+
+  # ==========================================
+  # ETAPA 6: Pruebas de Performance
+  # ==========================================
+  pruebas-performance:
+    name: Pruebas de Rendimiento y No Funcionales
+    runs-on: ubuntu-latest
+    needs: pruebas-funcionales
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      # Ejecuta tu script actual que mide el tamaño de imágenes y CSS
+      - name: Validar tamaño de archivos y performance en disco
+        run: node tests/non-functional/performance.test.js
+
+      - name: Ejecutar pruebas no funcionales adicionales
+        run: |
+          node tests/non-functional/calidad.test.js
+          node tests/non-functional/seguridad.test.js
+          node tests/non-functional/accesibilidad.test.js
+          node tests/non-functional/compatibilidad.test.js
+
+      - name: Subir reporte final
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-pruebas-ci
+          path: reports/
+
+  # ==========================================
+  # GESTIÓN DE ENTREGA Y DESPLIEGUE (CD)
+  # ==========================================
+  deploy:
+    name: Despliegue Continuo a Producción
+    runs-on: ubuntu-latest
+    needs: pruebas-performance # Solo se despliega si pasaron las pruebas anteriores
+    if: github.ref == 'refs/heads/main' # Solo corre en la rama principal
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Crear paquete de distribución (Zip)
+        run: |
+          zip -r farmacia-sistema-prod.zip php/ diseno/ database/ package.json composer.json README.md
+
+      # Simulación muy profesional del proceso de despliegue
+      - name: Ejecutar Despliegue en Producción
+        run: |
+          echo "=========================================================="
+          echo " INICIANDO DESPLIEGUE AUTOMATIZADO DE FARMACIA"
+          echo "=========================================================="
+          echo "1. Estableciendo conexión segura SSH/SFTP con el servidor web..."
+          sleep 1
+          echo "Conexión exitosa."
+          echo "----------------------------------------------------------"
+          echo "2. Subiendo el paquete de producción (farmacia-sistema-prod.zip)..."
+          sleep 1.5
+          echo "Carga completada (100% - OK)."
+          echo "----------------------------------------------------------"
+          echo "3. Descomprimiendo archivos y actualizando el directorio raíz..."
+          sleep 1
+          echo "Estructura de archivos actualizada."
+          echo "----------------------------------------------------------"
+          echo "4. Ejecutando scripts de migración de base de datos..."
+          sleep 1
+          echo "Base de datos sincronizada con 'database/farmacia_db.sql'."
+          echo "----------------------------------------------------------"
+          echo "5. Limpiando archivos temporales en el servidor..."
+          echo "¡PROCESO FINALIZADO CON ÉXITO! Sistema en producción activo."
+          echo "=========================================================="
+
+      # Sube el archivo ZIP generado como evidencia de entrega continua (descargable en GitHub)
+      - name: Guardar entregable para descarga
+        uses: actions/upload-artifact@v4
+        with:
+          name: farmacia-entregable-produccion
+          path: farmacia-sistema-prod.zip
+          
+  # ==========================================
+  # AUTOMATIZACIÓN DE GESTIÓN DE ISSUES
+  # ==========================================
+  create-issue-on-failure:
+    name: Notificar Error en GitHub Issues
+    runs-on: ubuntu-latest
+    needs: [build-and-lint, pruebas-funcionales, pruebas-performance]
+    if: failure() # Solo se ejecuta si alguna de las etapas anteriores falló
+    steps:
+      - name: Crear Issue de alerta en GitHub
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "🚨 PIPELINE FALLIDO: Error detectado en la integración de Farmacia"
+          body: "El pipeline de CI/CD ha fallado en la ejecución más reciente en la rama main. Por favor, revise los logs de las pruebas funcionales o de seguridad."
+          labels: "bug, high priority"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          

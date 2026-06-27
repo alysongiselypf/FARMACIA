@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UCSP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="../css/style1.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/script.js"></script>
+</head>
+<body>
+ <header>
+    <div class="container-hero">
+        <div class="container hero">
+            <div class="customer-support">
+                <i class="fa-solid fa-headset"></i>
+                <div class="content-customer-support">
+                    <span class="text">Soporte al cliente</span>
+                    <span class="number">123-456-7890</span>
+                </div>
+            </div>
+
+            <div class="container-logo">
+                <h1 class="logo"><a href="/">UCSP</a></h1>
+                <i class="fa-solid fa-hospital"></i>
+                <h1 class="logo"><a href="/">FARMACIA</a></h1>
+            </div>
+
+            <div class="container-icons">
+                <div class="container-user">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="user-panel" style="display: none;">
+                        <div class="user-panel-content">
+                            <button class="close-user-btn">&times;</button>
+                            <ul>
+                                <li><a href="../pages/login.php">Ingresar</a></li>
+                                <li><a href="../pages/signup.php">Crear cuenta</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-cart">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <div class="content-shopping-cart">
+                        <span class="number">(0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-panel">
+                <div class="cart-panel-content">
+                    <button class="close-cart-btn">&times;</button>
+                    <h2>Carrito:</h2>
+                    <div class="cart-items"></div>
+                    <div class="cart-summary">
+                        <p class="cart-quantity">Cantidad: <span class="total-quantity">0</span></p>
+                        <p class="cart-total">Subtotal: S/ <span class="total-price">0.00</span></p>
+                        <button class="checkout-btn">Finalizar pedido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="container__menu">
+            <div class="menu">
+                <input type="checkbox" id="check__menu" name="menu">
+                <label for="check__menu" id="label__check">Abrir menú</label>
+                    <i class="fas fa-bars icon__menu"></i>
+                </label>
+                <nav>
+                    <ul>
+                        <li><a href="../pages/index.php">Inicio</a></li>
+                        <li><a href="../pages/farmacia.php">Farmacia</a></li>
+                        <li><a href="#">Paciente</a>
+                            <ul>
+                                <li><a href="../pages/registro_paciente.php">Registro de Paciente</a></li>
+                                <li><a href="../pages/historial_medico.php">Historial Medico</a></li>
+                                <li><a href="../pages/citapaciente.php">Reservar Cita</a></li>
+                                <li><a href="../pages/consultapaciente.php">Consulta</a></li>
+                                <li><a href="../pages/recetapaciente.php">Receta</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Medico</a>
+                            <ul>
+                                <li><a href="../pages/perfildoctor.php">Perfil</a></li>
+                                <li><a href="../pages/consultadoctor.html">Consulta</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+</header>
+    <main>
+        <div class="registro-container">
+            <form class="registro-form" action="../php/registro.php" method="POST">
+                <h1 class="title">Crear cuenta</h1>
+                <label for="Nombre">
+                <i class="fa-solid fa-user-large"></i> Nombre
+                </label>
+                <input placeholder="Nombre" type="text" id="Nombre" name="Nombre" required>
+
+                <label for="Apellido">
+                <i class="fa-solid fa-user-large"></i> Apellido
+                </label>
+                <input placeholder="Apellido" type="text" id="Apellido" name="Apellido" required>
+
+                <label for="Correo">
+                <i class="fa-solid fa-envelope"></i> Correo
+                </label>
+                <input placeholder="Correo" type="email" id="Correo" name="Correo" required>
+
+                <label for="Contraseña">
+                <i class="fa-solid fa-lock"></i> Contraseña
+                </label>
+                <input placeholder="Contraseña" type="password" id="Contraseña" name="Contraseña" required>
+                <button id="button" type="submit">Crear</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
