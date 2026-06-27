@@ -91,13 +91,29 @@ pipeline {
         // ══════════════════════════════════════════════════
         // ETAPA 6: Pruebas de Performance
         // ══════════════════════════════════════════════════
-        stage('Pruebas de Performance') {
+        stage('Pruebas de Performance (JMeter)') {
             steps {
-                echo '══ ETAPA 6: Pruebas de Rendimiento ══'
-                bat 'node tests/non-functional/performance.test.js || echo Performance OK'
-                echo '✅ Pruebas de rendimiento completadas.'
+                echo '══ ETAPA 6: Pruebas de Rendimiento con JMeter ══'
+                // Limpiar reportes anteriores si existen
+                bat 'if exist reports\\jmeter-html rmdir /s /q reports\\jmeter-html'
+                bat 'if exist reports\\jmeter-results.jtl del reports\\jmeter-results.jtl'
+                // Ejecutar JMeter
+                bat '"C:\\apache-jmeter-5.6.3\\bin\\jmeter.bat" -n -t tests\\performance\\farmacia_jmeter.jmx -l reports\\jmeter-results.jtl -e -o reports\\jmeter-html'
+                echo '✅ Pruebas de rendimiento con JMeter completadas.'
             }
-        }
+            post {
+                always {
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'reports/jmeter-html',
+                        reportFiles: 'index.html',
+                        reportName: 'JMeter Performance Report'
+                    ])
+                }
+            }
+        } 
 
         // ══════════════════════════════════════════════════
         // ETAPA 7: Gestión de Issues
