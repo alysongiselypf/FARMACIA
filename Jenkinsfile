@@ -17,11 +17,11 @@ pipeline {
             steps {
                 echo '══ ETAPA 1: Construcción Automática ══'
                 echo 'Validando sintaxis PHP...'
-                bat 'for /r php %f in (*.php) do php -l "%f"'
+                bat 'powershell -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
                 echo 'Instalando dependencias de Node.js...'
                 bat 'npm install'
                 echo 'Instalando dependencias de Composer...'
-                bat 'powershell -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
+                bat 'composer install --no-interaction --prefer-dist'
                 echo '✅ Construcción completada.'
             }
         }
@@ -56,9 +56,7 @@ pipeline {
         stage('Pruebas Unitarias') {
             steps {
                 echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
-                bat '''
-                    .\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always
-                '''
+                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always'
                 echo '✅ Pruebas unitarias completadas.'
             }
             post {
@@ -100,7 +98,6 @@ pipeline {
         stage('Pruebas de Performance') {
             steps {
                 echo '══ ETAPA 6: Pruebas de Rendimiento ══'
-                bat 'echo Validando tamaño de archivos y recursos...'
                 bat 'node tests/non-functional/performance.test.js || echo Performance OK'
                 echo '✅ Pruebas de rendimiento completadas.'
             }
@@ -134,9 +131,6 @@ pipeline {
         }
     }
 
-    // ══════════════════════════════════════════════════
-    // POST: Resultado del Pipeline
-    // ══════════════════════════════════════════════════
     post {
         success {
             echo '╔══════════════════════════════════════╗'
