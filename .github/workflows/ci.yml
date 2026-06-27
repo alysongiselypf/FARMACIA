@@ -79,17 +79,15 @@ jobs:
         run: |
           mysql -h 127.0.0.1 -u root -proot farmacia_db < database/farmacia_db.sql
 
-      - name: Instalar PHPUnit
-        run: |
-          wget https://phar.phpunit.de/phpunit-10.phar
-          chmod +x phpunit-10.phar
+      - name: Instalar dependencias de Composer
+        run: composer install --no-interaction --prefer-dist
 
       # ------------------------------------------
       # ETAPA 3 & 4: Pruebas Unitarias y Funcionales
       # ------------------------------------------
       - name: Ejecutar Pruebas Funcionales (Base de Datos)
         run: |
-          php phpunit-10.phar tests/functional/ --testdox --colors=always
+          ./vendor/bin/phpunit tests/functional/ --testdox --colors=always
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
