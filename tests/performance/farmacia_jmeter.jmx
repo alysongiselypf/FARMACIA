@@ -10,8 +10,12 @@
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Usuarios Simultaneos">
         <intProp name="ThreadGroup.num_threads">10</intProp>
         <intProp name="ThreadGroup.ramp_time">5</intProp>
-        <intProp name="ThreadGroup.duration">30</intProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController">
+          <intProp name="LoopController.loops">3</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
       </ThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Index Principal">
@@ -19,6 +23,8 @@
           <intProp name="HTTPSampler.port">80</intProp>
           <stringProp name="HTTPSampler.path">/farmacia/diseno/pages/index.php</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login Page">
@@ -26,6 +32,8 @@
           <intProp name="HTTPSampler.port">80</intProp>
           <stringProp name="HTTPSampler.path">/farmacia/diseno/pages/login.php</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Farmacia Page">
@@ -33,6 +41,8 @@
           <intProp name="HTTPSampler.port">80</intProp>
           <stringProp name="HTTPSampler.path">/farmacia/diseno/pages/farmacia.php</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Registro HTML">
@@ -40,6 +50,8 @@
           <intProp name="HTTPSampler.port">80</intProp>
           <stringProp name="HTTPSampler.path">/farmacia/diseno/pages/registro.html</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
         </HTTPSamplerProxy>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login POST">
@@ -47,13 +59,17 @@
           <intProp name="HTTPSampler.port">80</intProp>
           <stringProp name="HTTPSampler.path">/farmacia/diseno/pages/login.php</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
               <elementProp name="numero_documento" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">numero_documento</stringProp>
                 <stringProp name="Argument.value">12345678</stringProp>
               </elementProp>
               <elementProp name="password" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.name">password</stringProp>
                 <stringProp name="Argument.value">123456</stringProp>
               </elementProp>
@@ -65,4 +81,5 @@
     </hashTree>
   </hashTree>
 </jmeterTestPlan>
+
 
