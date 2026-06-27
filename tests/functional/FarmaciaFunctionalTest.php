@@ -7,10 +7,10 @@ class FarmaciaFunctionalTest extends TestCase
 
     protected function setUp(): void
     {
-        $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-        $user = $_ENV['DB_USER'] ?? 'root';
-        $pass = $_ENV['DB_PASS'] ?? '';
-        $name = $_ENV['DB_NAME'] ?? 'farmacia_db';
+       $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
+$user = $_ENV['DB_USER'] ?? 'root';
+$pass = $_ENV['DB_PASS'] ?? '';
+$name = $_ENV['DB_NAME'] ?? 'farmacia_db';
 
         $this->pdo = new PDO("mysql:host=$host;dbname=$name", $user, $pass);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
