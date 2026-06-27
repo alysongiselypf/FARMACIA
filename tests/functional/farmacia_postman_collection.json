@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "Farmacia API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Pagina principal carga correctamente",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost/FARMACIA/diseno/pages/inicio.html"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 200 OK', function() {",
+            "  pm.response.to.have.status(200);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Login page responde",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost/FARMACIA/diseno/pages/login.html"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login page OK', function() {",
+            "  pm.response.to.have.status(200);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PHP Login responde POST",
+      "request": {
+        "method": "POST",
+        "url": "http://localhost/FARMACIA/php/login.php",
+        "header": [
+          {"key": "Content-Type", "value": "application/x-www-form-urlencoded"}
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {"key": "numero_documento", "value": "12345678"},
+            {"key": "password", "value": "123456"}
+          ]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Login responde correctamente', function() {",
+            "  pm.expect(pm.response.code).to.be.oneOf([200, 302]);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Registro page responde",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost/FARMACIA/diseno/pages/registro.html"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Registro page OK', function() {",
+            "  pm.response.to.have.status(200);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "Catalogo de medicamentos responde",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost/FARMACIA/diseno/pages/catalogo.html"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Catalogo OK', function() {",
+            "  pm.response.to.have.status(200);",
+            "});"
+          ]
+        }
+      }]
+    }
+  ]
+}
