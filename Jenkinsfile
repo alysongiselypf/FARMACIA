@@ -41,6 +41,7 @@ pipeline {
                             -Dsonar.sources=. ^
                             -Dsonar.exclusions=vendor/**,node_modules/**,reports/**,zap-home/** ^
                             -Dsonar.host.url=%SONAR_HOST_URL% ^
+                            -Dsonar.php.coverage.reportPaths=reports/coverage.xml ^
                             -Dsonar.token=%SONAR_AUTH_TOKEN%
                         """
                     }
@@ -55,7 +56,7 @@ pipeline {
         stage('Pruebas Unitarias') {
             steps {
                 echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
-                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always'
+                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always --coverage-clover reports/coverage.xml'
                 echo '✅ Pruebas unitarias completadas.'
             }
             post {
