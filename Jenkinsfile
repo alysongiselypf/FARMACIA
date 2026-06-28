@@ -89,7 +89,7 @@ pipeline {
                 bat 'if exist zap-home rmdir /s /q zap-home'
                 bat '''
                     cd "C:\\Program Files\\ZAP\\Zed Attack Proxy"
-                    java -Xmx512m -jar zap-2.17.0.jar -cmd -dir "%WORKSPACE%\\zap-home" -quickurl http://localhost/farmacia/diseno/pages/index.php -quickout "%WORKSPACE%\\reports\\zap-report.html" -quickprogress
+                    java -Xmx512m -jar zap-2.17.0.jar -cmd -port 8090 -dir "%WORKSPACE%\\zap-home" -quickurl http://localhost/farmacia/diseno/pages/index.php -quickout "%WORKSPACE%\\reports\\zap-report.html" -quickprogress
                 '''
                 echo '✅ Escaneo OWASP ZAP completado.'
             }
