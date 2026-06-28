@@ -6,28 +6,35 @@ pipeline {
         DB_USER = 'root'
         DB_PASS = ''
         DB_NAME = 'farmacia_db'
-}
+    }
 
     stages {
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 1: Construcción Automática
-        // ══════════════════════════════════════════════════
         stage('Construcción Automática') {
             steps {
                 echo '══ ETAPA 1: Construcción Automática ══'
-                echo 'Validando sintaxis PHP...'
                 bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -Command "Get-ChildItem -Recurse -Filter *.php -Path php | ForEach-Object { php -l $_.FullName }"'
-                echo 'Instalando dependencias de Node.js...'
                 bat 'npm install'
-                echo 'Instalando dependencias de Composer...'
                 bat 'composer install --no-interaction --prefer-dist'
                 echo '✅ Construcción completada.'
             }
         }
-        // ══════════════════════════════════════════════════
-        // ETAPA 2: Análisis Estático con SonarQube
-        // ══════════════════════════════════════════════════
+
+        // ══ ETAPA 3 VA ANTES QUE SONARQUBE ══
+        stage('Pruebas Unitarias') {
+            steps {
+                echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
+                bat 'if not exist reports mkdir reports'
+                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always --coverage-clover reports\\coverage.xml'
+                echo '✅ Pruebas unitarias completadas.'
+            }
+            post {
+                failure {
+                    echo '❌ Pruebas unitarias fallidas. Revise los logs.'
+                }
+            }
+        }
+
         stage('Análisis Estático (SonarQube)') {
             steps {
                 echo '══ ETAPA 2: Análisis Estático con SonarQube ══'
@@ -50,25 +57,6 @@ pipeline {
             }
         }
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 3: Pruebas Unitarias (PHPUnit - framework xUnit)
-        // ══════════════════════════════════════════════════
-        stage('Pruebas Unitarias') {
-            steps {
-                echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
-                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always --coverage-clover reports/coverage.xml'
-                echo '✅ Pruebas unitarias completadas.'
-            }
-            post {
-                failure {
-                    echo '❌ Pruebas unitarias fallidas. Revise los logs.'
-                }
-            }
-        }
-
-        // ══════════════════════════════════════════════════
-        // ETAPA 4: Pruebas Funcionales
-        // ══════════════════════════════════════════════════
         stage('Pruebas Funcionales (Postman/Newman)') {
             steps {
                 echo '══ ETAPA 4: Pruebas Funcionales con Newman/Postman ══'
@@ -77,15 +65,11 @@ pipeline {
             }
         }
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 5: Pruebas de Seguridad
-        // ══════════════════════════════════════════════════
         stage('Pruebas de Seguridad') {
             steps {
                 echo '══ ETAPA 5: Auditoría de Seguridad ══'
                 bat 'npm audit --audit-level=high || echo Auditoria completada'
                 bat 'node tests/non-functional/seguridad.test.js || echo Seguridad OK'
-
                 echo 'Ejecutando escaneo de seguridad con OWASP ZAP...'
                 bat 'if exist zap-home rmdir /s /q zap-home'
                 bat '''
@@ -108,9 +92,6 @@ pipeline {
             }
         }
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 6: Pruebas de Performance con JMeter
-        // ══════════════════════════════════════════════════
         stage('Pruebas de Performance (JMeter)') {
             steps {
                 echo '══ ETAPA 6: Pruebas de Rendimiento con JMeter ══'
@@ -137,9 +118,6 @@ pipeline {
             }
         }
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 7: Gestión de Issues
-        // ══════════════════════════════════════════════════
         stage('Gestión de Issues') {
             steps {
                 echo '══ ETAPA 7: Gestión de Issues ══'
@@ -148,17 +126,11 @@ pipeline {
             }
         }
 
-        // ══════════════════════════════════════════════════
-        // ETAPA 8: Despliegue Continuo
-        // ══════════════════════════════════════════════════
-       stage('Despliegue') {
+        stage('Despliegue') {
             steps {
                 echo '══ ETAPA 8: Despliegue Continuo ══'
-                echo '1. Estableciendo conexión con servidor...'
                 bat 'echo Conexion exitosa.'
-                echo '2. Generando paquete de distribución...'
                 bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Compress-Archive -Path php,diseno,database,package.json,composer.json -DestinationPath farmacia-sistema-prod.zip -Force'
-                echo '3. Desplegando en producción...'
                 bat 'echo Despliegue completado exitosamente.'
                 echo '✅ Sistema en producción activo.'
             }
@@ -183,3 +155,4 @@ pipeline {
         }
     }
 }
+
