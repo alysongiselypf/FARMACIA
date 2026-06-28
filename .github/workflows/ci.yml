@@ -77,7 +77,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          extensions: mysqli, pdo, pdo_mysql
+          extensions: mysqli, pdo, pdo_mysql, pcov
+          coverage: pcov
 
       - name: Importar base de datos
         run: |
