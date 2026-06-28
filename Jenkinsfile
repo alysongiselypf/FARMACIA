@@ -39,7 +39,7 @@ pipeline {
                             -Dsonar.projectKey=FARMACIA ^
                             -Dsonar.projectName=FARMACIA ^
                             -Dsonar.sources=. ^
-                            -Dsonar.exclusions=vendor/**,node_modules/**,reports/** ^
+                            -Dsonar.exclusions=vendor/**,node_modules/**,reports/**,zap-home/** ^
                             -Dsonar.host.url=%SONAR_HOST_URL% ^
                             -Dsonar.token=%SONAR_AUTH_TOKEN%
                         """
