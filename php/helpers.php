@@ -7,7 +7,7 @@
 
 function validarTelefono(string $telefono): bool
 {
-    return preg_match('/^[0-9]{9}$/', $telefono) === 1;
+    return preg_match('/^\d{9}$/', $telefono) === 1;
 }
 
 function validarRolUsuario(string $rol): bool
