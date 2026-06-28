@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once __DIR__ . '/../../php/helpers.php';
+use NombreDeNamespace\Helpers;
 
 class HelpersTest extends TestCase
 {
