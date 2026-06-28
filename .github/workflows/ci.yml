@@ -94,6 +94,18 @@ jobs:
           DB_PASS: root
           DB_NAME: farmacia_db
 
+      - name: Iniciar servidor PHP para pruebas de seguridad
+        run: |
+          php -S 127.0.0.1:8000 -t diseno &
+          sleep 3
+
+      - name: Escaneo de seguridad con OWASP ZAP
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://127.0.0.1:8000/pages/index.php'
+          fail_action: false
+          cmd_options: '-a'
+
   # ==========================================
   # ETAPA 6: Pruebas de Performance
   # ==========================================
