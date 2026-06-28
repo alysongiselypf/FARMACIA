@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Cargar .env solo si existe (local). En CI las vars vienen del entorno.
 if (file_exists(__DIR__ . '/../.env')) {
