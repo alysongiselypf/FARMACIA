@@ -128,11 +128,16 @@ pipeline {
 
         stage('Despliegue') {
             steps {
-                echo '══ ETAPA 8: Despliegue Continuo ══'
-                bat 'echo Conexion exitosa.'
+                echo '══ ETAPA 8: Despliegue Continuo (Docker) ══'
+                echo '1. Deteniendo contenedores previos (si existen)...'
+                bat 'docker-compose down || echo No habia contenedores previos'
+                echo '2. Construyendo imagen Docker y levantando contenedores...'
+                bat 'docker-compose up --build -d'
+                echo '3. Verificando que los contenedores esten corriendo...'
+                bat 'docker-compose ps'
+                echo '4. Generando paquete de distribución (respaldo adicional)...'
                 bat 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe Compress-Archive -Path php,diseno,database,package.json,composer.json -DestinationPath farmacia-sistema-prod.zip -Force'
-                bat 'echo Despliegue completado exitosamente.'
-                echo '✅ Sistema en producción activo.'
+                echo '✅ Sistema desplegado en contenedores Docker.'
             }
         }
     }
