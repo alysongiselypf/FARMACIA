@@ -23,6 +23,7 @@ pipeline {
         stage('Preparar Base de Datos') {
             steps {
                 echo '══ ETAPA: Preparando Base de Datos ══'
+                bat 'C:\\xampp\\mysql\\bin\\mysql -u root -e "DROP DATABASE IF EXISTS farmacia_db;"'
                 bat 'C:\\xampp\\mysql\\bin\\mysql -u root < database\\farmacia_db.sql'
                 echo '✅ Base de datos preparada.'
             }
