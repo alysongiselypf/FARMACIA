@@ -102,15 +102,26 @@ jobs:
 
       - name: Iniciar servidor PHP para pruebas de seguridad
         run: |
-          php -S 127.0.0.1:8000 -t diseno &
-          sleep 3
+          # 0.0.0.0 en lugar de 127.0.0.1 para que el contenedor Docker de ZAP pueda alcanzarlo
+          php -S 0.0.0.0:8000 -t diseno &
+          
+          # Esperar activamente hasta que el servidor responda (hasta 30 segundos)
+          echo "Esperando que el servidor PHP esté listo..."
+          for i in {1..15}; do
+            if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/pages/index.php | grep -qE "200|302|301"; then
+              echo "✅ Servidor PHP listo en intento $i"
+              break
+            fi
+            echo "Intento $i/15 - esperando..."
+            sleep 2
+          done
 
       - name: Escaneo de seguridad con OWASP ZAP
         uses: zaproxy/action-baseline@v0.14.0
         with:
           target: 'http://127.0.0.1:8000/pages/index.php'
           fail_action: false
-          cmd_options: '-a'
+          cmd_options: '-a -j'      # -j genera también reporte JSON
           allow_issue_writing: false
 
   # ==========================================
