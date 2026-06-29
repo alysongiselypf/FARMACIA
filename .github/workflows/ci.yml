@@ -7,8 +7,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
-  issues: write
+   contents: read
 
 jobs:
   # ==========================================
@@ -211,22 +210,4 @@ jobs:
         with:
           name: farmacia-entregable-produccion
           path: farmacia-sistema-prod.zip
-          
-  # ==========================================
-  # AUTOMATIZACIÓN DE GESTIÓN DE ISSUES
-  # ==========================================
-  create-issue-on-failure:
-    name: Notificar Error en GitHub Issues
-    runs-on: ubuntu-latest
-    needs: [build-and-lint, pruebas-funcionales, pruebas-performance]
-    if: failure() # Solo se ejecuta si alguna de las etapas anteriores falló
-    steps:
-      - name: Crear Issue de alerta en GitHub
-        uses: imjohnbo/issue-bot@v3
-        with:
-          title: "🚨 PIPELINE FALLIDO: Error detectado en la integración de Farmacia"
-          body: "El pipeline de CI/CD ha fallado en la ejecución más reciente en la rama main. Por favor, revise los logs de las pruebas funcionales o de seguridad."
-          labels: "bug, high priority"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
