@@ -1,9 +1,10 @@
 <?php
-// Credenciales de la base de datos (ajusta según tu configuración de XAMPP)
-$servername = "localhost";
-$username = "root";
-$password   = getenv('DB_PASSWORD') ?: "";
-$dbname = "farmacia_db"; // Asegúrate de que esta base de datos exista en phpMyAdmin
+// Credenciales de la base de datos.
+// Usa variables de entorno si existen (Docker), o valores por defecto para XAMPP local.
+$servername = getenv('DB_HOST') ?: "localhost";
+$username   = getenv('DB_USER') ?: "root";
+$password   = getenv('DB_PASS') ?: "";
+$dbname     = getenv('DB_NAME') ?: "farmacia_db";
 
 // Crear la conexión a la base de datos
 $conexion = new mysqli($servername, $username, $password, $dbname);
