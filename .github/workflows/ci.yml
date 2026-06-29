@@ -111,6 +111,7 @@ jobs:
           target: 'http://127.0.0.1:8000/pages/index.php'
           fail_action: false
           cmd_options: '-a'
+          allow_issue_writing: false
 
   # ==========================================
   # ETAPA 6: Pruebas de Performance
