@@ -4,11 +4,13 @@
          bootstrap="tests/bootstrap.php"
          colors="true">
     <testsuites>
+        <testsuite name="Pruebas Unitarias">
+            <directory>tests/unit</directory>
+        </testsuite>
         <testsuite name="Pruebas Funcionales">
             <directory>tests/functional</directory>
         </testsuite>
     </testsuites>
-
     <source>
         <include>
             <directory>php</directory>
@@ -19,13 +21,11 @@
             <directory>tests</directory>
         </exclude>
     </source>
-
     <coverage>
         <report>
             <clover outputFile="reports/coverage.xml"/>
         </report>
     </coverage>
-
     <php>
         <env name="DB_HOST" value="127.0.0.1"/>
         <env name="DB_USER" value="root"/>
@@ -33,5 +33,4 @@
         <env name="DB_NAME" value="farmacia_db"/>
     </php>
 </phpunit>
-
 
