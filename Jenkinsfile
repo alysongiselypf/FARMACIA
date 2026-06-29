@@ -34,7 +34,7 @@ pipeline {
             steps {
                 echo '══ ETAPA 3: Pruebas Unitarias con PHPUnit ══'
                 bat 'if not exist reports mkdir reports'
-                bat '.\\vendor\\bin\\phpunit tests/functional/ --testdox --colors=always --coverage-clover reports\\coverage.xml'
+                bat '.\\vendor\\bin\\phpunit --testdox --colors=always --coverage-clover reports\\coverage.xml'
                 echo '✅ Pruebas unitarias completadas.'
             }
             post {
