@@ -19,6 +19,14 @@ pipeline {
                 echo '✅ Construcción completada.'
             }
         }
+        
+        stage('Preparar Base de Datos') {
+            steps {
+                echo '══ ETAPA: Preparando Base de Datos ══'
+                bat 'C:\\xampp\\mysql\\bin\\mysql -u root < database\\farmacia_db.sql'
+                echo '✅ Base de datos preparada.'
+            }
+        }
 
         // ══ ETAPA 3 VA ANTES QUE SONARQUBE ══
         stage('Pruebas Unitarias') {
